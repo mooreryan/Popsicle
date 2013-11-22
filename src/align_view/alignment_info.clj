@@ -31,15 +31,14 @@
   "Parses the sam file reader and returns a map with the reference,
   read, start and end."  
   [sf-reader]
-  (let [iter (take 10 (->> sf-reader
-                          .iterator
-                          iterator-seq
-                          (filter #(complement 
-                                    (.getReadUnmappedFlag %)))))]
-    (apply str 
-           (map #(hash-map :ref (.getReferenceName %)
-                           :read (.getReadName %)
-                           :start (.getAlignmentStart %)
-                           :end (.getAlignmentEnd %)) 
-                iter))))
+  (let [iter (->> sf-reader
+                  .iterator
+                  iterator-seq
+                  (filter #(complement 
+                            (.getReadUnmappedFlag %))))]
+    (map #(hash-map :ref (.getReferenceName %)
+                    :read (.getReadName %)
+                    :start (.getAlignmentStart %)
+                    :end (.getAlignmentEnd %)) 
+         iter)))
 
