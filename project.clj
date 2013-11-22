@@ -4,8 +4,8 @@
   :license {:name "GNU General Public License"
             :url "http://www.gnu.org/licenses/gpl.txt"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 ;[net.sf/samtools "1.86"]
-                 ;[net.sf/picard "1.86"]
+                 [net.sf/samtools "1.86"]
+                 [net.sf/picard "1.86"]
                  [org.clojure/tools.cli "0.2.2"]
                  [org.apache.commons/commons-math3 "3.1.1"]
                  [incanter "1.5.4"]

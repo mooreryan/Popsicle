@@ -19,8 +19,8 @@
 (def sfr
   (new-sf-reader sorted-bam bam-index))
 
-#_(describe "print-stuff"
-          (print (print-stuff sfr)))
+(describe "print-stuff"
+          (should= :apple (print-stuff sfr)))
 
 (describe "align-info"
-          (print (align-info sfr)))
+          (should= :apple (align-info sfr)))
