@@ -15,4 +15,5 @@
   :profiles {:dev {:dependencies [[speclj "2.8.0"]]}}
   :plugins [[speclj "2.8.0"]]
   :test-paths ["spec"]
+  :jvm-opts ["-Xms256m" "-Xmx50g"]
   :main align_view.core)

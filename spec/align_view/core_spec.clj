@@ -2,6 +2,18 @@
   (:require [speclj.core :refer :all]
             [align_view.core :refer :all]))
 
-(describe "a test"
-  (it "FIXME, I fail."
-    (should= 0 1)))
+(def sorted-bam
+  "/Users/ryanmoore/projects/align_view/test_files/small.sorted.bam")
+
+(def bam-index
+  "/Users/ryanmoore/projects/align_view/test_files/small.sorted.bam.bai")
+
+
+(describe "-main"
+          #_(it "the main fun!"
+              (-main "-b" sorted-bam "-i" bam-index))
+          #_(it "with help arg"
+              (-main "-h"))
+          (it "can choose which to print"
+              (-main "-b" sorted-bam "-i" bam-index
+                     "seq1")))

@@ -30,7 +30,10 @@
                        (find-bases al-sfr))))
 
 
-(describe "hist"
-          (it "prints the graph"
+#_(describe "hist"
+          (it "prints the graphs"
               (should
-               (hist (find-bases al-sfr)))))
+               (hist (find-bases al-sfr))))
+          (it "prints only specified graphs"
+              (should
+               (hist (find-bases al-sfr) ["seq1"]))))
