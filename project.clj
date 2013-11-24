@@ -1,4 +1,4 @@
-(defproject popsicle "0.0.1-working3"
+(defproject popsicle "0.0.1"
   :description "view a bam alignment"
   :url "http://bioinformatics.udel.edu/"
   :license {:name "GNU General Public License"
