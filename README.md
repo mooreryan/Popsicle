@@ -1,1 +1,4 @@
-# align_view
+# Popsicle #
+
+Tasty viewing of bam files!
+
