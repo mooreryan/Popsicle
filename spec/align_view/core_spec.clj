@@ -3,10 +3,10 @@
             [align_view.core :refer :all]))
 
 (def sorted-bam
-  "/Users/ryanmoore/projects/align_view/test_files/small.sorted.bam")
+  "/Users/ryanmoore/projects/align_view/test_files/ex1.sorted.bam")
 
 (def bam-index
-  "/Users/ryanmoore/projects/align_view/test_files/small.sorted.bam.bai")
+  "/Users/ryanmoore/projects/align_view/test_files/ex1.sorted.bam.bai")
 
 
 (describe "-main"
@@ -16,4 +16,4 @@
               (-main "-h"))
           (it "can choose which to print"
               (-main "-b" sorted-bam "-i" bam-index
-                     "seq1")))
+                     "-r" "seq1")))

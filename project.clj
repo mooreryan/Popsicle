@@ -1,6 +1,6 @@
-(defproject align_view "0.0.0"
+(defproject align_view "0.0.2"
   :description "view a bam alignment"
-  :url "www.udel.edu"
+  :url "http://bioinformatics.udel.edu/"
   :license {:name "GNU General Public License"
             :url "http://www.gnu.org/licenses/gpl.txt"}
   :dependencies [[org.clojure/clojure "1.5.1"]
@@ -15,5 +15,5 @@
   :profiles {:dev {:dependencies [[speclj "2.8.0"]]}}
   :plugins [[speclj "2.8.0"]]
   :test-paths ["spec"]
-  :jvm-opts ["-Xms256m" "-Xmx50g"]
+  :jvm-opts ["-Xms256m" "-Xmx20g"]
   :main align_view.core)

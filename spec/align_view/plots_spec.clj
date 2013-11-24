@@ -6,7 +6,7 @@
 
 
 
-(describe "covered-bases"
+#_(describe "covered-bases"
           (it "returns a seq of bases"
               (should= (range 23 101)
                        (covered-bases {:start 23 :end 100 
@@ -22,9 +22,9 @@
 (def sfr
   (new-sf-reader sorted-bam bam-index))
 (def al-sfr
-  (align-info sfr))
+  (align-info sfr "seq1"))
 
-(describe "find-bases"
+#_(describe "find-bases"
           (it "returns a hash-map with as many entries as ref seqs"
               (should= 2
                        (find-bases al-sfr))))
@@ -32,8 +32,8 @@
 
 #_(describe "hist"
           (it "prints the graphs"
-              (should
-               (hist (find-bases al-sfr))))
+              (should-not
+               (hist al-sfr)))
           (it "prints only specified graphs"
-              (should
-               (hist (find-bases al-sfr) ["seq1"]))))
+              (should-not
+               (hist al-sfr ["seq1"]))))

@@ -6,8 +6,7 @@
 
 (def usage-str
   (str "\nExample: \njava -jar align_view-0.0.0.jar -b <bam-file> "
-       "-i <index-file>"
-       " [list of reads to include in graphs (optional)]\n\n"))
+       "-i <index-file> -r <reference seq name>"))
 
 (defn -main
   [& args]
@@ -19,7 +18,8 @@
                    ["-h" "--help" "Show help." 
                     :default false :flag true]
                    ["-b" "--bam-file" "Sorted bam file"]
-                   ["-i" "--bam-index" "Index file"])
+                   ["-i" "--bam-index" "Index file"]
+                   ["-r" "--reference-query" "Reference seq to query"])
           (catch java.lang.Exception e))]
     (do
       (when (:help options)
@@ -36,13 +36,14 @@
         (println usage-str)
         (System/exit 0))
 
+      (when-not (:reference-query options)
+        (println "\nSpecify a query")
+        (println usage-str)
+        (System/exit 0))
+
       
       (let [sf-reader (new-sf-reader (:bam-file options)
                                      (:bam-index options))
-            alignment-info (align-info sf-reader)
-            align-bases (find-bases alignment-info)] 
-        (if (seq extras)
-          (hist align-bases extras)
-          (hist align-bases))
-        (println (str "\nDone!" (java.util.Date.)) "\n\n")
-        (System/exit 0)))))
+            alignment-info (align-info sf-reader (:reference-query options))]
+        (hist alignment-info)
+        (println (str "\nDone! " (java.util.Date.)) "\n\n")))))
