@@ -11,3 +11,10 @@ java -jar popsicle-0.0.1-standalone.jar \ <br>
 
 - Opens charts in a new java window (make sure X11 forwarding is enabled if running through biohen)
 - The coverage is displayed not across the entire length of the reference sequence, but rather only where there is actually coverage
+
+##### Contact #####
+
+Ryan Moore, Graduate Research Assistant
+University of Delaware
+Center for Bioinformatics and Computational Biology
+moorer@udel.edu
