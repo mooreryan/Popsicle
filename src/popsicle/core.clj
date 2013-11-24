@@ -1,11 +1,11 @@
 (ns popsicle.core
-  (:require [align_view.alignment-info :refer :all]
-            [align_view.plots :refer :all]
+  (:require [popsicle.alignment-info :refer :all]
+            [popsicle.plots :refer :all]
             [clojure.tools.cli :as cli])
   (:gen-class :main true))
 
 (def usage-str
-  (str "\nExample: \njava -jar align_view-0.0.0.jar -b <bam-file> "
+  (str "\nExample: \njava -jar popsicle-x.y.z.jar -b <bam-file> "
        "-i <index-file> -r <reference seq name>"))
 
 (defn -main
