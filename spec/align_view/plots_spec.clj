@@ -6,15 +6,6 @@
 
 
 
-#_(describe "covered-bases"
-          (it "returns a seq of bases"
-              (should= (range 23 101)
-                       (covered-bases {:start 23 :end 100 
-                                       :ref "apple" :read "pie"}))))
-
-
-
-
 (def sorted-bam
   "/Users/ryanmoore/projects/align_view/test_files/small.sorted.bam")
 (def bam-index
@@ -23,12 +14,6 @@
   (new-sf-reader sorted-bam bam-index))
 (def al-sfr
   (align-info sfr "seq1"))
-
-#_(describe "find-bases"
-          (it "returns a hash-map with as many entries as ref seqs"
-              (should= 2
-                       (find-bases al-sfr))))
-
 
 #_(describe "hist"
           (it "prints the graphs"
