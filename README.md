@@ -17,6 +17,7 @@ java -jar popsicle-0.0.1-standalone.jar \ <br>
 - Only enter one reference sequence name at a time.
 - Opens charts in a new java window (make sure X11 forwarding is enabled if running through biohen)
 - The coverage is displayed not across the entire length of the reference sequence, but rather only where there is actually coverage
+- The coverage displayed is relative. It is actually the total coverage in each bin. The bin width is LengthRefSequence/100
 
 ##### Contact #####
 
