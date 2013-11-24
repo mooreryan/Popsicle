@@ -33,9 +33,11 @@
             read (.getReadName elem)
             start (.getAlignmentStart elem)
             end (.getAlignmentEnd elem)]
-        (if (contains? @info-map ref)
-          (swap! info-map assoc ref (conj (@info-map ref) (range start (inc end))))
-          (swap! info-map assoc ref [(range start (inc end))]))))
+        (if-not (.getReadUnmappedFlag elem)
+          (if (contains? @info-map ref)
+            (swap! info-map assoc ref (conj (@info-map ref) (range start (inc end))))
+            (swap! info-map assoc ref [(range start (inc end))])))))
+    (println (str "Aligned queries in map: " (count (@info-map ref-name))))
     @info-map))
 
 ;; Copyright 2013 Ryan Moore

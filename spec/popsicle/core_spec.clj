@@ -1,12 +1,12 @@
 (ns popsicle.core-spec
   (:require [speclj.core :refer :all]
-            [align_view.core :refer :all]))
+            [popsicle.core :refer :all]))
 
 (def sorted-bam
-  "/Users/ryanmoore/projects/align_view/test_files/ex1.sorted.bam")
+  "/Users/ryanmoore/projects/popsicle/test_files/ex1.sorted.bam")
 
 (def bam-index
-  "/Users/ryanmoore/projects/align_view/test_files/ex1.sorted.bam.bai")
+  "/Users/ryanmoore/projects/popsicle/test_files/ex1.sorted.bam.bai")
 
 
 (describe "-main"

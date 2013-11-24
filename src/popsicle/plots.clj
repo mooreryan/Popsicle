@@ -1,5 +1,5 @@
 (ns popsicle.plots
-  (:require [align_view.alignment-info :as al])
+  (:require [popsicle.alignment-info :as al])
   (:use [incanter core stats charts]))
 
 (defn hist
@@ -11,7 +11,7 @@
   (doseq [[seq bases] base-map]
     (view (histogram (flatten bases) 
                      :x-label "Base position"
-                     :y-label "Coverage"
+                     :y-label "Relative coverage (per Len/100 base bin)"
                      :title seq
                      :nbins 100)
           :width 800 :height 600)))
