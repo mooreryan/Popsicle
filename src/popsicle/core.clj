@@ -10,7 +10,7 @@
 
 (defn -main
   [& args]
-  (println (str "\nStarting -main at " ) 
+  (println (str "\nStarting up! " ) 
            (java.util.Date.))
   (let [[options extras banner]
         (try

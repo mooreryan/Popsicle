@@ -25,11 +25,8 @@
 
   Outputs a map: {'seq1' [[2 3 4 5] [4 5 6 7 8] [10 11 12]]}"  
   [sf-reader ref-name]
-  (println (str "\nStarting align-info at " ) 
-           (java.util.Date.))
   (let [iter (iterator-seq (make-iter sf-reader ref-name)) 
         info-map (atom {})]
-    (println (str "Building the info map at ") (java.util.Date.))
     (println (str "Num matching queries: " (count iter)))
     (doseq [elem iter]
       (let [ref (.getReferenceName elem)
