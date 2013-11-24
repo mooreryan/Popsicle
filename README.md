@@ -14,7 +14,7 @@ java -jar popsicle-0.0.1-standalone.jar \ <br>
 
 ##### Contact #####
 
-Ryan Moore, Graduate Research Assistant
-University of Delaware
-Center for Bioinformatics and Computational Biology
-moorer@udel.edu
+Ryan Moore, Graduate Research Assistant <br>
+University of Delaware <br>
+Center for Bioinformatics and Computational Biology <br>
+moorer@udel.edu <br>
