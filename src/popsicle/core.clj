@@ -48,7 +48,7 @@
             sf-reader (new-sf-reader (:bam-file options)
                                      (:bam-index options))]
         (doseq [ref ref-queries]
-          (hist (align-info sf-reader ref)))))))
+          (graph (align-info sf-reader ref) ref))))))
 
 ;; Copyright 2013 Ryan Moore
 

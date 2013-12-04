@@ -34,13 +34,15 @@
   "Parses the sam file reader and returns a map with the reference,
   read, start and end.
 
-  Outputs a map: {'seq1' [[2 3 4 5] [4 5 6 7 8] [10 11 12]]}"  
+  Outputs a map: {'seq1' [[2 3 4 5] [4 5 6 7 8] [10 11 12]]
+                  :length 809}"  
   [sf-reader ref-name]
   (let [j-iter (make-iter sf-reader ref-name)
         iter (iterator-seq j-iter)
         num-queries (count iter)
         info-map (atom {})
         ref-len (get-ref-len sf-reader ref-name)]
+    (swap! info-map assoc :length ref-len)
     (doseq [elem iter]
       (let [ref (.getReferenceName elem)
             read (.getReadName elem)

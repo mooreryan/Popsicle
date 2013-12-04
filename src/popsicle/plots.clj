@@ -2,17 +2,25 @@
   (:require [popsicle.alignment-info :as al])
   (:use [incanter core stats charts]))
 
-(defn hist
+(defn graph
   "Takes the base cov map from find-bases and outputs a histogram of
   the coverage for each reference sequence."
-  [base-map]
-  (doseq [[seq bases] base-map]
-    (view (histogram (flatten bases) 
-                     :x-label "Base position"
-                     :y-label "Relative coverage (per Len/100 base bin)"
-                     :title seq
-                     :nbins 100)
-          :width 800 :height 600)))
+  [base-map ref-name]
+  (let [bases (base-map ref-name)
+        freqs (frequencies (flatten bases))
+        xs (range 1 (inc (:length base-map)))
+        ys (map (fn [x]
+                  (if (contains? freqs x)
+                    (freqs x)
+                    0))
+                xs)
+        max-y (apply max ys)]
+    (doto (xy-plot xs ys
+                   :x-label "Base position"
+                   :y-label "Coverage"
+                   :title ref-name)
+      #_(add-lines (repeat max-y 100) (range max-y))
+      (view :width 1200 :height 800))))
 
 ;; Copyright 2013 Ryan Moore
 

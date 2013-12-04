@@ -12,10 +12,10 @@
 (def al-sfr
   (align-info sfr "seq1"))
 
-(describe "hist"
+#_(describe "graph"
           (it "prints the graphs"
               (should-not
-               (hist al-sfr))))
+               (graph al-sfr "seq1"))))
 
 ;; Copyright 2013 Ryan Moore
 
