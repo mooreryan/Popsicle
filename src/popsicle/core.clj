@@ -1,17 +1,17 @@
 (ns popsicle.core
   (:require [popsicle.alignment-info :refer :all]
             [popsicle.plots :refer :all]
+            [popsicle.parse :refer :all]
             [clojure.tools.cli :as cli])
   (:gen-class :main true))
 
 (def usage-str
   (str "\nExample: \njava -jar popsicle-x.y.z.jar -b <bam-file> "
-       "-i <index-file> -r <reference seq name>"))
+       "-i <index-file> -r <reference seq file>"))
 
 (defn -main
   [& args]
-  (println (str "\nStarting up! " ) 
-           (java.util.Date.))
+  (println ";reference\tmatching-queries\taligned-queries")
   (let [[options extras banner]
         (try
           (cli/cli args 
@@ -19,7 +19,7 @@
                     :default false :flag true]
                    ["-b" "--bam-file" "Sorted bam file"]
                    ["-i" "--bam-index" "Index file"]
-                   ["-r" "--reference-query" "Reference seq to query"])
+                   ["-r" "--references-file" "Reference sequenes to query"])
           (catch java.lang.Exception e))]
     (do
       (when (:help options)
@@ -36,17 +36,18 @@
         (println usage-str)
         (System/exit 0))
 
-      (when-not (:reference-query options)
+      ;; todo - check for file existing
+      (when-not (:references-file options)
         (println "\nSpecify a query")
         (println usage-str)
         (System/exit 0))
 
       
-      (let [sf-reader (new-sf-reader (:bam-file options)
-                                     (:bam-index options))
-            alignment-info (align-info sf-reader (:reference-query options))]
-        (hist alignment-info)
-        (println (str "\nDone! " (java.util.Date.)) "\n\n")))))
+      (let [ref-queries (read-file (:references-file options))
+            sf-reader (new-sf-reader (:bam-file options)
+                                     (:bam-index options))]
+        (doseq [ref ref-queries]
+          (hist (align-info sf-reader ref)))))))
 
 ;; Copyright 2013 Ryan Moore
 

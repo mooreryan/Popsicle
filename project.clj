@@ -1,4 +1,4 @@
-(defproject popsicle "0.0.1"
+(defproject popsicle "0.0.1-2"
   :description "view a bam alignment"
   :url "http://bioinformatics.udel.edu/"
   :license {:name "GNU General Public License"
@@ -14,7 +14,7 @@
   :profiles {:dev {:dependencies [[speclj "2.8.0"]]}}
   :plugins [[speclj "2.8.0"]]
   :test-paths ["spec"]
-  :jvm-opts ["-Xms256m" "-Xmx20g"]
+  :jvm-opts ["-Xms256m" "-Xmx2g"]
   :main popsicle.core)
 
 ;; Copyright 2013 Ryan Moore

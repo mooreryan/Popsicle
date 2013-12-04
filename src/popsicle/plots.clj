@@ -6,8 +6,6 @@
   "Takes the base cov map from find-bases and outputs a histogram of
   the coverage for each reference sequence."
   [base-map]
-  (println (str "\nStarting hist at " ) 
-           (java.util.Date.))
   (doseq [[seq bases] base-map]
     (view (histogram (flatten bases) 
                      :x-label "Base position"

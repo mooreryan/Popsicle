@@ -9,12 +9,21 @@ Given a sorted bam file, an index file and a reference sequnce, Popsicle gives a
 ## Usage ##
 
 java -jar popsicle-0.0.1-standalone.jar \ <br>
--b sorted-bam-file.bam -i bam-index.bam.bai -r "reference sequence name"
+-b sorted-bam-file.bam -i bam-index.bam.bai -r reference\_sequence\_file.txt
+
+### Reference sequence file ###
+
+Enter the sequences you wish to view one per line in a text file like so: <br>
+<br>
+seq1 <br>
+seq2 <br>
+seq3 <br>
+... <br>
+seqN
 
 ## Notes ##
 
 - The bam file must be sorted. Make your index from this sorted file.
-- Only enter one reference sequence name at a time.
 - Opens charts in a new java window (make sure X11 forwarding is enabled if running through biohen)
 - The coverage is displayed not across the entire length of the reference sequence, but rather only where there is actually coverage
 - The coverage displayed is relative. It is actually the total coverage in each bin. The bin width is LengthRefSequence/100

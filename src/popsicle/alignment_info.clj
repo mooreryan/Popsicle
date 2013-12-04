@@ -25,9 +25,10 @@
 
   Outputs a map: {'seq1' [[2 3 4 5] [4 5 6 7 8] [10 11 12]]}"  
   [sf-reader ref-name]
-  (let [iter (iterator-seq (make-iter sf-reader ref-name)) 
+  (let [j-iter (make-iter sf-reader ref-name)
+        iter (iterator-seq j-iter)
+        num-queries (count iter)
         info-map (atom {})]
-    (println (str "Num matching queries: " (count iter)))
     (doseq [elem iter]
       (let [ref (.getReferenceName elem)
             read (.getReadName elem)
@@ -37,7 +38,9 @@
           (if (contains? @info-map ref)
             (swap! info-map assoc ref (conj (@info-map ref) (range start (inc end))))
             (swap! info-map assoc ref [(range start (inc end))])))))
-    (println (str "Aligned queries in map: " (count (@info-map ref-name))))
+    (println (clojure.string/join "\t"
+              [ref-name num-queries (count (@info-map ref-name))]))
+    (.close j-iter)
     @info-map))
 
 ;; Copyright 2013 Ryan Moore
