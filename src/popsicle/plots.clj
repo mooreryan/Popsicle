@@ -1,11 +1,12 @@
 (ns popsicle.plots
   (:require [popsicle.alignment-info :as al])
+  (:import (org.jfree.chart.plot ValueMarker))
   (:use [incanter core stats charts]))
 
 (defn graph
   "Takes the base cov map from find-bases and outputs a histogram of
   the coverage for each reference sequence."
-  [base-map ref-name]
+  [base-map ref-name regions]
   (let [bases (base-map ref-name)
         freqs (frequencies (flatten bases))
         xs (range 1 (inc (:length base-map)))
@@ -14,13 +15,23 @@
                     (freqs x)
                     0))
                 xs)
-        max-y (apply max ys)]
-    (doto (xy-plot xs ys
+        max-y (apply max ys)
+        plot1 (xy-plot xs ys
                    :x-label "Base position"
                    :y-label "Coverage"
                    :title ref-name)
-      #_(add-lines (repeat max-y 100) (range max-y))
-      (view :width 1200 :height 800))))
+        xy (.getXYPlot plot1)]
+    (set-stroke-color plot1 java.awt.Color/black)
+    (doseq [[x-val y-val] regions]
+      (.addDomainMarker xy (ValueMarker. 
+                            x-val 
+                            java.awt.Color/green 
+                            (java.awt.BasicStroke. 2)))
+      (.addDomainMarker xy (ValueMarker. 
+                            y-val 
+                            java.awt.Color/red 
+                            (java.awt.BasicStroke. 2))))
+    (view plot1 :width 1200 :height 800)))
 
 ;; Copyright 2013 Ryan Moore
 

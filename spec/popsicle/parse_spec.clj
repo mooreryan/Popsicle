@@ -8,4 +8,4 @@
 (describe "read-file"
           (it "returns a vector of the lines"
               (should= ["seq1" "seq2"]
-                       (read-file test-file))))
+                       (read-ref-file test-file))))

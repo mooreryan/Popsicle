@@ -1,7 +1,7 @@
 (ns popsicle.parse
   (:require [clojure.java.io :as io]))
 
-(defn read-file 
+(defn read-ref-file 
   "Read that file!"
   [fname]
   (let [refs (atom [])] 
@@ -9,6 +9,23 @@
       (doseq [line (line-seq rdr)]
         (swap! refs conj line)))
     @refs))
+
+(defn read-region-file
+  "Read the file with regions. { 'ref1' [23 55 89 233] }"
+  [fname]
+  (let [info-map (atom {})] 
+    (with-open [rdr (io/reader fname)]
+      (doseq [line (line-seq rdr)]
+        (let [split-line (clojure.string/split line #"\t")
+              ref (first split-line)
+              start (Integer. (split-line 2))
+              end (Integer. (last split-line))]
+          (if (contains? @info-map ref)
+            (swap! info-map assoc ref 
+                   (conj (@info-map ref) 
+                         [start end]))
+            (swap! info-map assoc ref [[start end]])))))
+    @info-map))
 
 ;; Copyright 2013 Ryan Moore
 

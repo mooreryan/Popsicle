@@ -20,7 +20,9 @@
                    ["-b" "--bam-file" "Sorted bam file"]
                    ["-i" "--bam-index" "Index file"]
                    ["-r" "--references-file" 
-                    "Reference sequenes to query"])
+                    "Reference sequenes to query"]
+                   ["-e" "--regions-file" 
+                    "File with regions"])
           (catch java.lang.Exception e))]
     (do
       (when (:help options)
@@ -43,12 +45,19 @@
         (println usage-str)
         (System/exit 0))
 
+      (when-not (:regions-file options)
+        (println "\nSpecify a query")
+        (println usage-str)
+        (System/exit 0))
+
       
-      (let [ref-queries (read-file (:references-file options))
+      (let [ref-queries (read-ref-file (:references-file options))
             sf-reader (new-sf-reader (:bam-file options)
-                                     (:bam-index options))]
+                                     (:bam-index options))
+            regions (read-region-file (:regions-file options))]
+        (prn "regions: " regions)
         (doseq [ref ref-queries]
-          (graph (align-info sf-reader ref) ref))))))
+          (graph (align-info sf-reader ref) ref (regions ref)))))))
 
 ;; Copyright 2013 Ryan Moore
 

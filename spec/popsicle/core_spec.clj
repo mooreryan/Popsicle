@@ -9,6 +9,8 @@
   "/Users/ryanmoore/projects/popsicle/test_files/ex1.sorted.bam.bai")
 (def ref-file
   "/Users/ryanmoore/projects/popsicle/test_files/ref_list.txt")
+(def regions-file
+  "/Users/ryanmoore/projects/popsicle/test_files/regions.tab")
 
 
 (describe "-main"
@@ -18,7 +20,8 @@
               (-main "-h"))
           (it "can choose which to print"
               (-main "-b" sorted-bam "-i" bam-index
-                     "-r" ref-file)))
+                     "-r" ref-file
+                     "-e" regions-file)))
 
 ;; Copyright 2013 Ryan Moore
 
