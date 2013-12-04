@@ -5,7 +5,9 @@
                             SAMFileWriter
                             SAMFileWriterFactory
                             SAMRecord
-                            SAMRecordIterator)))
+                            SAMRecordIterator
+                            SAMFileHeader
+                            SAMSequenceRecord)))
 
 (defn new-sf-reader
   "Take a bam and an index and return SAMFileReader object w/index."
@@ -19,6 +21,15 @@
   [sf-reader ref-name]
   (.queryOverlapping sf-reader ref-name 0 0))
 
+(defn get-ref-len
+  "Gets the reference sequence length. `ref` is either the reference
+  sequence name or the index."  
+  [sf-reader ref]
+  (let [header (.getFileHeader sf-reader)
+        seq-record (.getSequence header ref)
+        seq-len (.getSequenceLength seq-record)]
+    seq-len))
+
 (defn align-info
   "Parses the sam file reader and returns a map with the reference,
   read, start and end.
@@ -28,7 +39,8 @@
   (let [j-iter (make-iter sf-reader ref-name)
         iter (iterator-seq j-iter)
         num-queries (count iter)
-        info-map (atom {})]
+        info-map (atom {})
+        ref-len (get-ref-len sf-reader ref-name)]
     (doseq [elem iter]
       (let [ref (.getReferenceName elem)
             read (.getReadName elem)
@@ -36,10 +48,14 @@
             end (.getAlignmentEnd elem)]
         (if-not (.getReadUnmappedFlag elem)
           (if (contains? @info-map ref)
-            (swap! info-map assoc ref (conj (@info-map ref) (range start (inc end))))
+            (swap! info-map assoc ref (conj (@info-map ref) 
+                                            (range start (inc end))))
             (swap! info-map assoc ref [(range start (inc end))])))))
     (println (clojure.string/join "\t"
-              [ref-name num-queries (count (@info-map ref-name))]))
+              [ref-name 
+               ref-len 
+               num-queries 
+               (count (@info-map ref-name))]))
     (.close j-iter)
     @info-map))
 
@@ -59,4 +75,3 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with Popsicle.  If not, see <http://www.gnu.org/licenses/>.
-

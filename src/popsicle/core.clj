@@ -11,7 +11,7 @@
 
 (defn -main
   [& args]
-  (println ";reference\tmatching-queries\taligned-queries")
+  (println ";reference\tlength\tmatching-queries\taligned-queries")
   (let [[options extras banner]
         (try
           (cli/cli args 
@@ -19,7 +19,8 @@
                     :default false :flag true]
                    ["-b" "--bam-file" "Sorted bam file"]
                    ["-i" "--bam-index" "Index file"]
-                   ["-r" "--references-file" "Reference sequenes to query"])
+                   ["-r" "--references-file" 
+                    "Reference sequenes to query"])
           (catch java.lang.Exception e))]
     (do
       (when (:help options)
