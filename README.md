@@ -9,7 +9,8 @@ Given a sorted bam file, an index file and a reference sequnce, Popsicle gives a
 ## Usage ##
 
 java -jar popsicle-0.0.1-standalone.jar \ <br>
--b sorted-bam-file.bam -i bam-index.bam.bai -r reference\_sequence\_file.txt
+-b sorted-bam-file.bam -i bam-index.bam.bai -r reference\_sequence\_file.txt \ <br>
+-e regions-file -s stats-output-file
 
 ### Reference sequence file ###
 
@@ -20,6 +21,14 @@ seq2 <br>
 seq3 <br>
 ... <br>
 seqN
+
+### Regions file ###
+
+ref-name\tregion-name\tstart\tstop
+
+## Outputs ##
+
+Higher is better for mean/sd and length/sd
 
 ## Notes ##
 

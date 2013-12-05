@@ -7,7 +7,8 @@
 
 (def usage-str
   (str "\nExample: \njava -jar popsicle-x.y.z.jar -b <bam-file> "
-       "-i <index-file> -r <reference seq file>"))
+       "-i <index-file> -r <reference-seq-file> "
+       "-e <regions-file> -s <stats-output-file>"))
 
 (defn -main
   [& args]
@@ -22,7 +23,9 @@
                    ["-r" "--references-file" 
                     "Reference sequenes to query"]
                    ["-e" "--regions-file" 
-                    "File with regions"])
+                    "File with regions"]
+                   ["-s" "--stats-file"
+                    "Path to output stats info."])
           (catch java.lang.Exception e))]
     (do
       (when (:help options)
@@ -41,12 +44,17 @@
 
       ;; todo - check for file existing
       (when-not (:references-file options)
-        (println "\nSpecify a query")
+        (println "\nSpecify a reference file")
         (println usage-str)
         (System/exit 0))
 
       (when-not (:regions-file options)
-        (println "\nSpecify a query")
+        (println "\nSpecify a regions file")
+        (println usage-str)
+        (System/exit 0))
+
+      (when-not (:stats-file options)
+        (println "\nSpecify a stats output file")
         (println usage-str)
         (System/exit 0))
 
@@ -54,10 +62,20 @@
       (let [ref-queries (read-ref-file (:references-file options))
             sf-reader (new-sf-reader (:bam-file options)
                                      (:bam-index options))
-            regions (read-region-file (:regions-file options))]
-        (prn "regions: " regions)
+            regions (read-region-file (:regions-file options))
+            stats-strings (atom [])]
         (doseq [ref ref-queries]
-          (graph (align-info sf-reader ref) ref (regions ref)))))))
+          (let [ys (graph 
+                    (align-info sf-reader ref) ref (regions ref))
+                region-stats (stats ys (regions ref))]
+            (swap! stats-strings
+                   conj 
+                   (apply str region-stats))))
+        (spit (:stats-file options) 
+              (apply 
+               str 
+               ";length\tmin\tmax\trange\tmean\tsd\tmean/sd\tlength/sd\n" 
+               @stats-strings))))))
 
 ;; Copyright 2013 Ryan Moore
 

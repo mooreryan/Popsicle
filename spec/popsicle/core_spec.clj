@@ -11,6 +11,8 @@
   "/Users/ryanmoore/projects/popsicle/test_files/ref_list.txt")
 (def regions-file
   "/Users/ryanmoore/projects/popsicle/test_files/regions.tab")
+(def stats-file
+  "/Users/ryanmoore/projects/popsicle/test_files/stats_output.tab")
 
 
 (describe "-main"
@@ -19,9 +21,11 @@
           #_(it "with help arg"
               (-main "-h"))
           (it "can choose which to print"
-              (-main "-b" sorted-bam "-i" bam-index
+              (-main "-b" sorted-bam 
+                     "-i" bam-index
                      "-r" ref-file
-                     "-e" regions-file)))
+                     "-e" regions-file
+                     "-s" stats-file)))
 
 ;; Copyright 2013 Ryan Moore
 
