@@ -3,37 +3,75 @@
   (:import (org.jfree.chart.plot ValueMarker))
   (:use [incanter core stats charts]))
 
-(defn stats
+(defn peak
+  "Counts the number of elements in `col` below the mean and divides
+  that by the number of elements in the collection.
+
+  This function is slow."  
+  [col]
+  (double (/ (count (filter #(< % (mean col)) col)) 
+             (count col))))
+
+(defn sign-change
+  "Gives a ratio of sign changes by total possible sign changes about
+  the mean.
+
+  This function is slow."  
+  [col]
+  (double (/ (count (filter #(not= (first %) (second %)) 
+                            (partition 2 1 (map #(if (< % (mean col)) 1 0)
+                                                col)))) 
+             (dec (count col)))))
+
+(defn region-stats
   "Returns a lazy-seq of strings with info about the ORFs:
 
-   length\tmin\tmax\trange\tmean\tsd\tmean/sd\tlength/sd
+   ref-name\treg-name\tlength\tmin\tmax\trange\tmean\tsd\t
+   sd/mean\tsd/range\tpeak\tsign-change
 
   This function could be performed during the (graph) doseq call."
-  [ys regions]
-  (for [[x y] regions]
+  [ys regions ref-name]
+  (for [[x y reg-name] regions]
     (let [cov (subvec (into [] ys) (dec x) y)
           length (- y x)
           min (apply min cov)
           max (apply max cov)
           the-range (- max min)
           the-mean (mean cov)
-          the-sd (sd cov)]
+          the-sd (sd cov)
+          the-peak (peak cov)
+          the-sign-change (sign-change cov)]
+      (println (str (clojure.string/join 
+            "\t" 
+            [ref-name
+             reg-name
+             the-peak
+             the-sign-change
+             (count (filter #(not= (first %) (second %)) 
+                            (partition 2 1 (map #(if (< % (mean cov)) 1 0)
+                                                cov))))
+             (dec (count cov))])
+           "\n"))
       (str (clojure.string/join 
             "\t" 
-            [length
+            [ref-name
+             reg-name
+             length
              min
              max
              the-range
              the-mean
              the-sd
-             (/ the-mean the-sd)
-             (/ length the-sd)])
+             (/ the-sd the-mean)
+             (/ the-sd the-range)
+             the-peak
+             the-sign-change])
            "\n"))))
 
 (defn graph
   "Takes the base cov map from find-bases and outputs a histogram of
   the coverage for each reference sequence. Returns the ys for
-  processing by the stats function."  
+  processing by the region-stats function."  
   [base-map ref-name regions]
   (let [bases (base-map ref-name)
         freqs (frequencies (flatten bases))

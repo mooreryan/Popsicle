@@ -67,14 +67,14 @@
         (doseq [ref ref-queries]
           (let [ys (graph 
                     (align-info sf-reader ref) ref (regions ref))
-                region-stats (stats ys (regions ref))]
+                reg-stats (region-stats ys (regions ref) ref)]
             (swap! stats-strings
                    conj 
-                   (apply str region-stats))))
+                   (apply str reg-stats))))
         (spit (:stats-file options) 
               (apply 
                str 
-               ";length\tmin\tmax\trange\tmean\tsd\tmean/sd\tlength/sd\n" 
+               ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd\tsd/mean\tsd/range\tpeak\tsign-change\n" 
                @stats-strings))))))
 
 ;; Copyright 2013 Ryan Moore

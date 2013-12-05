@@ -18,13 +18,14 @@
       (doseq [line (line-seq rdr)]
         (let [split-line (clojure.string/split line #"\t")
               ref (first split-line)
+              region (second split-line)
               start (Integer. (split-line 2))
               end (Integer. (last split-line))]
           (if (contains? @info-map ref)
             (swap! info-map assoc ref 
                    (conj (@info-map ref) 
-                         [start end]))
-            (swap! info-map assoc ref [[start end]])))))
+                         [start end region]))
+            (swap! info-map assoc ref [[start end region]])))))
     @info-map))
 
 ;; Copyright 2013 Ryan Moore
