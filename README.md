@@ -34,8 +34,6 @@ Higher is better for mean/sd and length/sd
 
 - The bam file must be sorted. Make your index from this sorted file.
 - Opens charts in a new java window (make sure X11 forwarding is enabled if running through biohen)
-- The coverage is displayed not across the entire length of the reference sequence, but rather only where there is actually coverage
-- The coverage displayed is relative. It is actually the total coverage in each bin. The bin width is LengthRefSequence/100
 
 ##### Contact #####
 
