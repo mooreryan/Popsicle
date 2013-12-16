@@ -16,7 +16,7 @@
   (let [info-map (atom {})] 
     (with-open [rdr (io/reader fname)]
       (doseq [line (line-seq rdr)]
-        (let [split-line (clojure.string/split line #"\t")
+        (let [split-line (clojure.string/split line #",")
               ref (first split-line)
               region (second split-line)
               start (Integer. (split-line 2))

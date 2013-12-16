@@ -10,7 +10,7 @@
 (def ref-file
   "/Users/ryanmoore/projects/popsicle/test_files/ref_list.txt")
 (def regions-file
-  "/Users/ryanmoore/projects/popsicle/test_files/regions.tab")
+  "/Users/ryanmoore/projects/popsicle/test_files/regions.csv")
 (def stats-file
   "/Users/ryanmoore/projects/popsicle/test_files/stats_output.tab")
 

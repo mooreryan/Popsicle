@@ -5,7 +5,7 @@
 (def test-file 
   "/Users/ryanmoore/projects/popsicle/test_files/ref_list.txt")
 (def regions-file 
-  "/Users/ryanmoore/projects/popsicle/test_files/regions.tab")
+  "/Users/ryanmoore/projects/popsicle/test_files/regions.csv")
 
 (describe "read-file"
           (it "returns a vector of the lines"

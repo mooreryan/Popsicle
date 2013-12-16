@@ -50,8 +50,7 @@
              (count (filter #(not= (first %) (second %)) 
                             (partition 2 1 (map #(if (< % (mean cov)) 1 0)
                                                 cov))))
-             (dec (count cov))])
-           "\n"))
+             (dec (count cov))])))
       (str (clojure.string/join 
             "\t" 
             [ref-name
@@ -97,7 +96,8 @@
                             y-val 
                             java.awt.Color/red 
                             (java.awt.BasicStroke. 2))))
-    (view plot1 :width 1200 :height 800)
+    #_(view plot1 :width 1200 :height 800)
+    (save plot1 (str ref-name ".png") :width 1200 :height 800)
     ys))
 
 ;; Copyright 2013 Ryan Moore
