@@ -11,3 +11,4 @@ pom.xml
 .lein-repl-history
 /maven_repo
 /target
+/test_files/stats_testing
