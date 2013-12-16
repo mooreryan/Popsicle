@@ -74,7 +74,8 @@
         (spit (:stats-file options) 
               (apply 
                str 
-               ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd\tsd/mean\tsd/range\tpeak\tsign-change\n" 
+               (str ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd"
+                    "\tsd/mean\tsd/range\tpeak\tsign-change\n") 
                @stats-strings))))))
 
 ;; Copyright 2013 Ryan Moore

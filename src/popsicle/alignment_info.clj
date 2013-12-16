@@ -61,6 +61,155 @@
     (.close j-iter)
     @info-map))
 
+;;;; functions from BioSPORC
+
+(defn get-orf-coverage
+  [query-iter-map]
+  (let [posns (range (:orf-start query-iter-map)
+                     (inc (:orf-end query-iter-map)))
+        mapped-reads (->> query-iter-map
+                          :q-iter
+                          iterator-seq
+                          (filter #(complement 
+                                    (.getReadUnmappedFlag %))))]))
+
+(defn new-overlapping-query-iter 
+  "Takes a SamFileReader obj, contig name, start position, end position
+   and returns a map like so:
+
+   {:contig-name contig-name :orf-number orf-name :q-iter
+    overlapping-query-iterator :type :overlapping :orf-start 324
+    :orf-end 3258}
+
+   This iterator will return all reads overlapping the given interval
+   on the given contig.
+
+   Basically you will need to create one iter for each orf for each
+   contig. TODO: Could these could be done as agents?"  
+  [sam-file-reader contig-name orf-number start-pos end-pos]
+  {:contig-name contig-name
+   :orf-number orf-number
+   :orf-start start-pos
+   :orf-end end-pos
+   :type :overlapping
+   :q-iter (.queryOverlapping sam-file-reader contig-name 
+                              start-pos end-pos)})
+
+(defn new-contained-query-iter
+  "Takes a SamFileReader obj, contig name, start position, end position
+   and returns a map like so:
+
+   {:contig-name contig-name :orf-number orf-name :q-iter
+    overlapping-query-iterator :type :contained :orf-start 324
+    :orf-end 3258}
+
+   This iterator will return all reads contained the given interval on
+   the given contig.
+
+   Basically you will need to create one iter for each orf for each
+   contig. TODO: Could these could be done as agents?"
+  [sam-file-reader contig-name orf-number start-pos end-pos]
+  {:contig-name contig-name
+   :orf-number orf-number
+   :orf-start start-pos
+   :orf-end end-pos
+   :type :islander
+   :q-iter (.queryContained sam-file-reader contig-name 
+                            start-pos end-pos)})
+
+
+
+(defn get-reads-from-iter 
+  "Returns a sequence of ORF maps.
+
+   You will need to run this function once for every overlapping
+   query iterator. Done in agents?"
+  [query-iter-map]
+  (let [mapped-reads 
+        (->> query-iter-map
+             :q-iter
+             iterator-seq
+             (filter #(complement (.getReadUnmappedFlag %))))]
+    (map (fn [read]
+           (hash-map :contig-name (.getReferenceName read)
+                     :orf-number (:orf-number query-iter-map)
+                     :read-name (.getReadName read)
+                     :align-start (.getAlignmentStart read)
+                     :align-end (.getAlignmentEnd read)
+                     :type (:type query-iter-map)))
+         mapped-reads)))
+
+;;;; the funs below will be called from main ;;;;
+
+(defn get-overlappers-from-orf-maps
+  "Get the overlapping read maps from a seq of orf-maps. There will be
+  multiple read maps (likely) per ORF map.
+
+  Really this is a convience function that combines all the above into
+  one easy-to-call package."
+  [orf-maps b-name i-name]
+  (->> orf-maps
+       (map (fn [orf-map]
+              (let [overlap-rdr (new-sam-file-reader b-name i-name)
+                    overlap-q-iter-map (new-overlapping-query-iter
+                                        overlap-rdr
+                                        (:contig-name orf-map)
+                                        (:orf-number orf-map)
+                                        (:orf-start orf-map)
+                                        (:orf-end orf-map))]
+                (get-reads-from-iter overlap-q-iter-map))))
+       (reduce into)))
+
+
+(defn get-islanders-from-orf-maps
+  "Get the islanders read maps from a seq of orf-maps. There will be
+  multiple read maps (likely) per ORF map.
+
+  Really this is a convience function that combines all the above into
+  one easy-to-call package."
+  [orf-maps b-name i-name]
+  (->> orf-maps 
+       (map (fn [orf-map]
+              (let [contain-rdr (new-sam-file-reader b-name i-name)
+                    contain-q-iter-map (new-contained-query-iter
+                                        contain-rdr
+                                        (:contig-name orf-map)
+                                        (:orf-number orf-map)
+                                        (:orf-start orf-map)
+                                        (:orf-end orf-map))]
+                (get-reads-from-iter contain-q-iter-map))))
+       (reduce into)))
+
+(defn get-bridgers
+  "Uses set difference...Subtracts islander reads from overlappers to
+  give you bridgers.
+
+  Unfortunately you have to realize the whole lazy seq to check if
+  it's in there or not"
+  [overlappers islanders]
+  (lazy-seq 
+   (map #(assoc % :type :bridger) 
+        (set/difference (into #{} (map #(dissoc % :type) 
+                                       overlappers)) 
+                        (into #{} (map #(dissoc % :type) 
+                                       islanders))))))
+
+(defn combine-read-maps
+  "Takes the islander maps and the bridger maps and combines them."
+  [map1 map2]
+  (into map1 map2))
+
+
+(defn make-read-maps
+  "Does the work of getting alignment info!"
+  [orf-maps bam bai]
+  (let [overlappers (get-overlappers-from-orf-maps orf-maps bam bai)
+        islanders (get-islanders-from-orf-maps orf-maps bam bai)
+        bridgers (get-bridgers overlappers islanders)]
+    (into islanders bridgers)))
+
+
+
 ;; Copyright 2013 Ryan Moore
 
 ;; This file is part of Popsicle.
