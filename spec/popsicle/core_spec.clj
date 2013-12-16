@@ -4,7 +4,6 @@
 
 (def sorted-bam
   "/Users/ryanmoore/projects/popsicle/test_files/ex1.sorted.bam")
-
 (def bam-index
   "/Users/ryanmoore/projects/popsicle/test_files/ex1.sorted.bam.bai")
 (def ref-file
@@ -14,7 +13,6 @@
 (def stats-file
   "/Users/ryanmoore/projects/popsicle/test_files/stats_output.tab")
 
-
 (describe "-main"
           #_(it "the main fun!"
               (-main "-b" sorted-bam "-i" bam-index))
@@ -23,8 +21,7 @@
           (it "can choose which to print"
               (-main "-b" sorted-bam 
                      "-i" bam-index
-                     "-r" ref-file
-                     "-e" regions-file
+                     "-r" regions-file
                      "-s" stats-file)))
 
 ;; Copyright 2013 Ryan Moore

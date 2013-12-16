@@ -11,7 +11,7 @@
 (def sfr
   (new-sf-reader sorted-bam bam-index))
 (def al-sfr
-  (align-info sfr "seq1"))
+  (align-info sfr (make-ref-iter sfr "seq1") "seq1"))
 
 #_(describe "graph"
           (it "prints the graphs"

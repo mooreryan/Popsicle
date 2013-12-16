@@ -7,8 +7,8 @@
 
 (def usage-str
   (str "\nExample: \njava -jar popsicle-x.y.z.jar -b <bam-file> "
-       "-i <index-file> -r <reference-seq-file> "
-       "-e <regions-file> -s <stats-output-file>"))
+       "-i <index-file> "
+       "-r <regions-file> -s <stats-output-file>"))
 
 (defn -main
   [& args]
@@ -20,13 +20,12 @@
                     :default false :flag true]
                    ["-b" "--bam-file" "Sorted bam file"]
                    ["-i" "--bam-index" "Index file"]
-                   ["-r" "--references-file" 
-                    "Reference sequenes to query"]
-                   ["-e" "--regions-file" 
+                   ["-r" "--regions-file" 
                     "File with regions"]
                    ["-s" "--stats-file"
                     "Path to output stats info."])
           (catch java.lang.Exception e))]
+
     (do
       (when (:help options)
         (println usage-str banner)
@@ -43,11 +42,6 @@
         (System/exit 0))
 
       ;; todo - check for file existing
-      (when-not (:references-file options)
-        (println "\nSpecify a reference file")
-        (println usage-str)
-        (System/exit 0))
-
       (when-not (:regions-file options)
         (println "\nSpecify a regions file")
         (println usage-str)
@@ -59,14 +53,17 @@
         (System/exit 0))
 
       
-      (let [ref-queries (read-ref-file (:references-file options))
-            sf-reader (new-sf-reader (:bam-file options)
+      (let [sf-reader (new-sf-reader (:bam-file options)
                                      (:bam-index options))
             regions (read-region-file (:regions-file options))
+            ref-queries (keys regions)
             stats-strings (atom [])]
         (doseq [ref ref-queries]
-          (let [ys (graph 
-                    (align-info sf-reader ref) ref (regions ref))
+          (let [ys (graph (align-info sf-reader 
+                                      (make-ref-iter sf-reader ref) 
+                                      ref) 
+                          ref 
+                          (regions ref))
                 reg-stats (region-stats ys (regions ref) ref)]
             (swap! stats-strings
                    conj 
