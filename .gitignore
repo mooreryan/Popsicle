@@ -12,3 +12,4 @@ pom.xml
 /maven_repo
 /target
 /test_files/stats_testing
+*png

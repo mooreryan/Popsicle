@@ -19,10 +19,10 @@
           #_(it "with help arg"
               (-main "-h"))
           (it "can choose which to print"
-              (-main "-b" sorted-bam 
-                     "-i" bam-index
-                     "-r" regions-file
-                     "-s" stats-file)))
+              (should= :apple (-main "-b" sorted-bam 
+                                     "-i" bam-index
+                                     "-r" regions-file
+                                     "-s" stats-file))))
 
 ;; Copyright 2013 Ryan Moore
 

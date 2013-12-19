@@ -11,7 +11,8 @@
     @refs))
 
 (defn read-region-file
-  "Read the file with regions. { 'ref1' [23 55 89 233] }"
+  "Read the file with regions. Output like so:
+  { 'ref1' [[23 55 'orf1'] [98 233 'orf2']] }"
   [fname]
   (let [info-map (atom {})] 
     (with-open [rdr (io/reader fname)]

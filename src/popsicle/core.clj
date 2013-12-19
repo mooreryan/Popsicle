@@ -3,6 +3,7 @@
             [popsicle.plots :refer :all]
             [popsicle.parse :refer :all]
             [clojure.tools.cli :as cli])
+  (:use [incanter core stats charts])
   (:gen-class :main true))
 
 (def usage-str
@@ -58,7 +59,9 @@
             regions (read-region-file (:regions-file options))
             ref-queries (keys regions)
             stats-strings (atom [])]
+        ;; to get the new stats
         (doseq [ref ref-queries]
+                                        ; ys is the coverage vector
           (let [ys (graph (align-info sf-reader 
                                       (make-ref-iter sf-reader ref) 
                                       ref) 
@@ -73,8 +76,71 @@
                str 
                (str ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd"
                     "\tsd/mean\tsd/range\tpeak\tsign-change\n") 
-               @stats-strings))))))
-
+               @stats-strings))
+        ;; to get the old biosporc stats
+        ;; each region-vec will have multiple vectors
+        (doseq [[ref regions-vec] regions]
+          (dorun
+           (map (fn [region]
+                  (let [start (first region)
+                        end (second region)
+                        name (last region)
+                        overlap-ys (align-info 
+                                    sf-reader
+                                    (make-overlap-reg-iter sf-reader
+                                                           ref
+                                                           name
+                                                           start
+                                                           end)
+                                    ref)
+                        overlap-read-info (into #{} (overlap-ys ref))
+                        contained-ys (align-info 
+                                      sf-reader
+                                      (make-contained-reg-iter
+                                       sf-reader
+                                       ref
+                                       name
+                                       start
+                                       end)
+                                      ref)
+                        contained-read-info (into #{} (contained-ys ref))
+                        bridger-set (clojure.set/difference
+                                     overlap-read-info
+                                     contained-read-info)
+                        bridgers {ref (vec bridger-set)}
+                        islanders {ref (vec (clojure.set/difference
+                                             contained-read-info
+                                             bridger-set))}]
+                    (def foo (fn [align-info-output]
+                               (let [freqs
+                                     (frequencies (flatten 
+                                                   (align-info-output 
+                                                    ref)))
+                                     xs (range start (inc end))
+                                     ys (map (fn [x]
+                                               (if (contains? freqs x)
+                                                 (freqs x)
+                                                 0))
+                                             xs)]
+                                 ys)))
+                    (println "overlapping ref " ref "name " name 
+;                             "ys " (foo overlap-ys) 
+                             "count " (count (foo overlap-ys)) 
+                             "total" (sum (foo overlap-ys)))
+                    (println "contained ref " ref "name " name 
+;                             "ys " (foo contained-ys) 
+                             "count " (count (foo contained-ys)) 
+                             "total" (sum (foo contained-ys)))
+                    (println "bridgers " ref "name " name 
+;                            "ys " (foo bridgers)
+                             "count " (count (foo bridgers)) 
+                             "total" (sum (foo bridgers)))
+                    (println "islanders " ref "name " name 
+;                             "ys " (foo islanders)
+                             "count " (count (foo islanders)) 
+                             "total" (sum (foo islanders)))
+))
+                regions-vec)))))))
 ;; Copyright 2013 Ryan Moore
 
 ;; This file is part of Popsicle.
