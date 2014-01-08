@@ -45,7 +45,9 @@
 
 (defn get-ref-len
   "Gets the reference sequence length. `ref` is either the reference
-  sequence name or the index."  
+  sequence name or the index. This will throw
+  clojure.lang.Reflector.invokeNoArgInstanceMember if the reference
+  isn't present in the bam file which leads to a NullPointerException."
   [sf-reader ref]
   (let [header (.getFileHeader sf-reader)
         seq-record (.getSequence header ref)
@@ -117,8 +119,10 @@
   This function could be performed during the (graph) doseq call."
   [ys regions ref-name]
   (for [[x y reg-name] regions]
-    (let [cov (subvec (into [] ys) (dec x) y)
-          length (- y x)
+    (let [cov (if (and (zero? x) (zero? y))
+                (into [] ys)
+                (subvec (into [] ys) (dec x) y))
+          length (count cov)
           min (apply min cov)
           max (apply max cov)
           the-range (- max min)

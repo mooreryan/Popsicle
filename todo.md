@@ -14,3 +14,9 @@ Do this by getting the reference index, then use SAMFileHeader.getSequence(), wh
 - replace SAMRecord with BAMRecord?
 - Check for input files existing
 - The references file is redundant if you include a regions file
+
+
+## Error handling ##
+
+- files not existing
+- reference sequencing not being in the bam file

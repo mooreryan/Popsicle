@@ -8,8 +8,10 @@
   "/Users/ryanmoore/projects/popsicle/test_files/ex1.sorted.bam.bai")
 (def ref-file
   "/Users/ryanmoore/projects/popsicle/test_files/ref_list.txt")
-(def regions-file
+#_(def regions-file
   "/Users/ryanmoore/projects/popsicle/test_files/regions.csv")
+(def regions-file
+  "/Users/ryanmoore/projects/popsicle/test_files/whole_regions.csv")
 (def stats-file
   "/Users/ryanmoore/projects/popsicle/test_files/stats_output.tab")
 

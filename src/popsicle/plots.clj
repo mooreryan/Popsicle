@@ -11,7 +11,7 @@
 
   ys looks like this [1 2 3 2 3 4 5 7 8 6 5 3 2 4 2]. It is the per
   base coverage."  
-  [base-map ref-name regions]
+  [base-map ref-name regions directory]
   (let [bases (base-map ref-name)
         freqs (frequencies (flatten bases))
         xs (range 1 (inc (:length base-map)))
@@ -37,7 +37,8 @@
                             java.awt.Color/red 
                             (java.awt.BasicStroke. 2))))
     #_(view plot1 :width 1200 :height 800)
-    (save plot1 (str ref-name ".png") :width 1200 :height 800)
+    (save plot1 (str directory "/" ref-name ".png") 
+          :width 1200 :height 800)
     ys))
 
 ;; Copyright 2013 Ryan Moore

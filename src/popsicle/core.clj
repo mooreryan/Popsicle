@@ -9,7 +9,8 @@
 (def usage-str
   (str "\nExample: \njava -jar popsicle-x.y.z.jar -b <bam-file> "
        "-i <index-file> "
-       "-r <regions-file> -s <stats-output-file>"))
+       "-r <regions-file> -s <stats-output-file>"
+       "-d <image-output-folder>"))
 
 (defn -main
   [& args]
@@ -24,7 +25,9 @@
                    ["-r" "--regions-file" 
                     "File with regions"]
                    ["-s" "--stats-file"
-                    "Path to output stats info."])
+                    "Path to output stats info."]
+                   ["-d" "--directory"
+                    "Folder to output images"])
           (catch java.lang.Exception e))]
 
     (do
@@ -53,6 +56,11 @@
         (println usage-str)
         (System/exit 0))
 
+      (when-not (:directory options)
+        (println "\nSpecify a folder for the images")
+        (println usage-str)
+        (System/exit 0))
+
       
       (let [sf-reader (new-sf-reader (:bam-file options)
                                      (:bam-index options))
@@ -66,7 +74,8 @@
                                       (make-ref-iter sf-reader ref) 
                                       ref) 
                           ref 
-                          (regions ref))
+                          (regions ref)
+                          (:directory options))
                 reg-stats (region-stats ys (regions ref) ref)]
             (swap! stats-strings
                    conj 
