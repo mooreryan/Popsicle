@@ -61,7 +61,11 @@
         (println usage-str)
         (System/exit 0))
 
-      
+
+      (spit (:stats-file options)
+            (str ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd"
+                    "\tsd/mean\tsd/range\tpeak\tsign-change\n"))
+
       (let [sf-reader (new-sf-reader (:bam-file options)
                                      (:bam-index options))
             regions (read-region-file (:regions-file options))
@@ -77,10 +81,13 @@
                           (regions ref)
                           (:directory options))
                 reg-stats (region-stats ys (regions ref) ref)]
-            (swap! stats-strings
+            (spit (:stats-file options)
+                  (apply str reg-stats)
+                  :append true)
+            #_(swap! stats-strings
                    conj 
                    (apply str reg-stats))))
-        (spit (:stats-file options) 
+        #_(spit (:stats-file options) 
               (apply 
                str 
                (str ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd"
@@ -88,7 +95,7 @@
                @stats-strings))
         ;; to get the old biosporc stats
         ;; each region-vec will have multiple vectors
-        (doseq [[ref regions-vec] regions]
+        #_(doseq [[ref regions-vec] regions]
           (dorun
            (map (fn [region]
                   (let [start (first region)

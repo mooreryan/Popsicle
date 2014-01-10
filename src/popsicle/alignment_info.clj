@@ -101,7 +101,7 @@
 
 (defn sign-change
   "Gives a ratio of sign changes by total possible sign changes about
-  the mean.
+  the mean. Lower should be better.
 
   This function is slow."  
   [col]

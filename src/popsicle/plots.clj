@@ -37,7 +37,11 @@
                             java.awt.Color/red 
                             (java.awt.BasicStroke. 2))))
     #_(view plot1 :width 1200 :height 800)
-    (save plot1 (str directory "/" ref-name ".png") 
+    (save plot1 (str directory 
+                     "/" 
+                     (clojure.string/replace
+                      ref-name #"[/|]" "_") 
+                     ".png") 
           :width 1200 :height 800)
     ys))
 
