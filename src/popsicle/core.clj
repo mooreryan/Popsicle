@@ -27,7 +27,9 @@
                    ["-s" "--stats-file"
                     "Path to output stats info."]
                    ["-d" "--directory"
-                    "Folder to output images"])
+                    "Folder to output images"]
+                   ["-c" "--cov-file"
+                    "Path to output coverage info."])
           (catch java.lang.Exception e))]
 
     (do
@@ -61,6 +63,11 @@
         (println usage-str)
         (System/exit 0))
 
+      (when-not (:cov-file options)
+        (println "\nSpecify a cov output file")
+        (println usage-str)
+        (System/exit 0))
+
 
       (spit (:stats-file options)
             (str ";ref\tregion\tlength\tmin\tmax\trange\tmean\tsd"
@@ -81,6 +88,12 @@
                           (regions ref)
                           (:directory options))
                 reg-stats (region-stats ys (regions ref) ref)]
+            (spit (:cov-file options)
+                  (apply str 
+                         ref 
+                         ",[" 
+                         (clojure.string/join " " ys) "]")
+                  :append true)
             (spit (:stats-file options)
                   (apply str reg-stats)
                   :append true)

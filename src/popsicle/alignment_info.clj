@@ -150,8 +150,12 @@
              the-range
              the-mean
              the-sd
-             (/ the-sd the-mean)
-             (/ the-sd the-range)
+             (if-not (zero? the-mean) 
+               (/ the-sd the-mean)
+               "X")
+             (if-not (zero? the-range)
+               (/ the-sd the-range)
+               "X")
              the-peak
              the-sign-change])
            "\n"))))
