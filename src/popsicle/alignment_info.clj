@@ -99,6 +99,13 @@
   (double (/ (count (filter #(< % (mean col)) col)) 
              (count col))))
 
+(defn num-peaks
+  "Finds local mins and maxes. Based on
+  https://gist.github.com/sixtenbe/1178136" 
+  [ys min-width]
+  (let [mid (fn [v] (nth v (quot (count v) 2)))
+        ]))
+
 (defn sign-change
   "Gives a ratio of sign changes by total possible sign changes about
   the mean. Lower should be better.
