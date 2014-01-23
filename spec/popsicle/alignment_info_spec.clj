@@ -91,6 +91,11 @@
                        (region-stats ys (regions "ref1") "ref1"))))
 
 
+(describe "extend-read"
+          (it "extends reads"
+              (should= :apple
+                       (extend-read sam-record avg-insert-size))))
+
 ;; Copyright 2013 Ryan Moore
 
 ;; This file is part of Popsicle.
