@@ -54,6 +54,46 @@
         seq-len (.getSequenceLength seq-record)]
     seq-len))
 
+(def not-zero? (complement zero?))
+
+(defn extend-read
+  "Extends the end of the read in the appropriate direction. The idea
+  is from PMC3032669. 
+
+  First checks if the read is actually part of a pair off the
+  sequencer. If not just, return the original start and stop. Else, if
+  read is first of pair, extend alignment end by half the insert
+  size. If read is second of pair, extend alignment start by half the
+  insert size. (regardless of whether mate is mapped up or downstream,
+  or even if it is mapped at all).
+
+  Takes the sam record and user provided average insert size and
+  returns the start and end in a vector. If Picard can't infer an
+  insert size, the user provided estimate is used instead."
+  [sam-record avg-insert-size]
+  (if (.getReadPairedFlag sam-record)
+    (let [inferred-insert-size (abs (.getInferredInsertSize sam-record))
+          first-pair (.getFirstOfPairFlag sam-record)
+          last-pair (.getSecondOfPairFlag sam-record)
+          real-start (.getAlignmentStart sam-record)
+          real-end (.getAlignmentEnd sam-record)]
+      (cond 
+       (and first-pair (zero? inferred-insert-size))
+       (vector real-start (+ real-end (quot avg-insert-size 2)))
+
+       first-pair
+       (vector real-start (+ real-end (quot inferred-insert-size 2)))
+
+       (and last-pair (zero? inferred-insert-size))
+       (vector (+ real-start (quot avg-insert-size 2)) real-end)
+
+       last-pair
+       (vector (+ real-start (quot inferred-insert-size 2)) real-end)
+
+       :else ; in case of something really weird, give the origninal
+       (vector (.getAlignmentStart sam-record) (.getAlignmentEnd sam-record))))    
+    (vector (.getAlignmentStart sam-record) (.getAlignmentEnd sam-record))))
+
 (defn align-info
   "Parses the samtools iterator and returns a map with the reference
   pointing to a vector of vectors one for each read containing the
