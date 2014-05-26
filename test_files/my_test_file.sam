@@ -1,11 +1,11 @@
 @HD	VN:1.0	SO:unsorted
 @SQ	SN:ref1	LN:5000
 @SQ	SN:ref2	LN:10000
-ref1-read1	65	ref1	10	*	150M	ref1-read2	660	800	*	*
-ref1-read2	129	ref1	660	*	150M	ref1-read1	10	-800	*	*
-ref1-read3	65	ref1	90	*	150M	ref1-read4	740	800	*	*
-ref1-read4	129	ref1	740	*	150M	ref1-read3	90	-800	*	*
-ref2-read1	65	ref2	250	*	150M	ref2-read2	900	800	*	*
-ref2-read2	129	ref2	900	*	150M	ref2-read1	250	-800	*	*
-ref2-read3	65	ref2	700	*	150M	ref2-read4	1350	800	*	*
-ref2-read4	129	ref2	1350	*	150M	ref2-read3	700	-800	*	*
+template1	65	ref1	10	*	150M	=	660	800	*	*
+template1	129	ref1	660	*	150M	=	10	-800	*	*
+template2	65	ref1	90	*	150M	=	740	800	*	*
+template2	129	ref1	740	*	150M	=	90	-800	*	*
+template3	65	ref2	250	*	150M	=	900	800	*	*
+template3	129	ref2	900	*	150M	=	250	-800	*	*
+template4	65	ref2	700	*	150M	=	1350	800	*	*
+template4	129	ref2	1350	*	150M	=	700	-800	*	*

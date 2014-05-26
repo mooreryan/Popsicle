@@ -69,14 +69,26 @@
 
   Takes the sam record and user provided average insert size and
   returns the start and end in a vector. If Picard can't infer an
-  insert size, the user provided estimate is used instead."
-  [sam-record avg-insert-size]
+  insert size, the user provided estimate is used instead.
+
+  Note on the insert size, Picard gives you the 5' to 5' distance, but
+  what I mean by insert size, I think is 3' to 3' distance, so to fix
+  this, I think just subtract twice the read length. Right now you
+  have to pass that value, but ideally Picard would get it."
+  [sam-record avg-insert-size read-len]
   (if (.getReadPairedFlag sam-record)
-    (let [inferred-insert-size (abs (.getInferredInsertSize sam-record))
+    (let [inferred-insert-size 
+          (- (abs (.getInferredInsertSize sam-record))
+                                  (* 2 read-len))
           first-pair (.getFirstOfPairFlag sam-record)
           last-pair (.getSecondOfPairFlag sam-record)
           real-start (.getAlignmentStart sam-record)
           real-end (.getAlignmentEnd sam-record)]
+      (println inferred-insert-size 
+               first-pair
+               last-pair
+               real-start
+               real-end)
       (cond 
        (and first-pair (zero? inferred-insert-size))
        (vector real-start (+ real-end (quot avg-insert-size 2)))
@@ -91,8 +103,10 @@
        (vector (+ real-start (quot inferred-insert-size 2)) real-end)
 
        :else ; in case of something really weird, give the origninal
-       (vector (.getAlignmentStart sam-record) (.getAlignmentEnd sam-record))))    
-    (vector (.getAlignmentStart sam-record) (.getAlignmentEnd sam-record))))
+       (vector (.getAlignmentStart sam-record) 
+               (.getAlignmentEnd sam-record))))    
+    (vector (.getAlignmentStart sam-record) 
+            (.getAlignmentEnd sam-record))))
 
 (defn align-info
   "Parses the samtools iterator and returns a map with the reference
@@ -108,7 +122,13 @@
   (let [iter (iterator-seq sf-iter)
         num-queries (count iter)
         info-map (atom {})
-        ref-len (get-ref-len sf-reader ref-name)]
+        ref-len (try (get-ref-len sf-reader ref-name)
+                     (catch Exception e 
+                       (spit "popsicle10-exceptions.txt" 
+                             (str "exception: "(.getMessage e) "\n"
+                                  "reference: " ref-name "\n")
+                                              :append true)
+                            999999))]
     (swap! info-map assoc :length ref-len)
     (doseq [elem iter]
       (let [ref (.getReferenceName elem)

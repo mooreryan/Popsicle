@@ -15,7 +15,7 @@
 (def stats-file
   "/Users/ryanmoore/projects/popsicle/test_files/stats_output.tab")
 
-(describe "-main"
+#_(describe "-main"
           #_(it "the main fun!"
               (-main "-b" sorted-bam "-i" bam-index))
           #_(it "with help arg"

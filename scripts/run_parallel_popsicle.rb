@@ -21,15 +21,15 @@ opts = Trollop::options do
 end
 
 # set vars
-opts[:popsicle] = nil
-opts[:bam] = nil
-opts[:index] = nil
-opts[:regions] = nil
+opts[:popsicle] = "/home/moorer/bin/popsicle-0.0.1-10-standalone.jar"
+opts[:bam] = "/data/moorer/serc/recruitment/to_illumina/serc_ill_reads_to_serc_ill_contigs.sorted.bam"
+opts[:index] = opts[:bam] + ".bai"
+opts[:regions] = "/data/moorer/serc/recruitment/to_illumina/reference_names.regions"
 
-opts[:outdir] = nil
-opts[:stats_out] = nil
-opts[:cov_out] = nil
-opts[:image_dir] = nil
+opts[:outdir] = "/data/moorer/serc/popsicle/illumina_contigs/bowtie2/all_mapped_contigs"
+opts[:stats_out] = opts[:outdir] + "/stats/serc_ill_reads_to_serc_ill_contigs.popsicle10_stats"
+opts[:cov_out] = opts[:outdir] + "/stats/serc_ill_reads_to_serc_ill_contigs.popsicle10_cov"
+opts[:image_dir] = opts[:outdir] + "/images"
 
 
 if !File.exist? opts[:popsicle]
@@ -57,9 +57,12 @@ if !File.exist? opts[:outdir]
   exit
 end
 
+if opts[:threads] < 2
+  $stderr.puts "Run Popsicle directly if you use only 1 thread!"
+  exit
+end
 
 
-opts[:number] = 1 if opts[:number] < 1
 
 def parse_fname(fname)
   { dir: File.dirname(fname), 
@@ -72,24 +75,26 @@ fname = parse_fname opts[:regions]
 #### split the region file into subfiles
 
 # to easily reopen
-sub_file_names = (0..opts[:number]-1).to_a
+sub_file_names = (0..opts[:threads]-1).to_a
   .map { |n| "#{opts[:outdir]}/#{fname[:base]}_#{n}" }
 
 sub_files = sub_file_names
   .map { |name| File.open( name, 'w' ) }
 
 File.open( opts[:regions], 'r' ).each_with_index do |line, idx|
-  sub_files[idx % opts[:number]].puts line.chomp
+  sub_files[idx % opts[:threads]].puts line.chomp
 end
 
 sub_files.each { |f| f.close }
 
-cmds = Parallel.map_with_index(sub_file_names, 
-                               in_processes: opts[:number]) { |name, idx|
-  "java -jar -Xms256m -Xmx6g " +
+cmds = Parallel.each_with_index(sub_file_names, 
+                               in_processes: opts[:threads]) { |name, idx|
+  cmd = "java -jar -Xms256m -Xmx6g " +
   "#{opts[:popsicle]} -b #{opts[:bam]} -i #{opts[:index]} " +
   "-r #{name} -s #{opts[:stats_out]}_#{idx} -d #{opts[:image_dir]} " +
   "-c #{opts[:cov_out]}_#{idx}"
+
+  `#{cmd}`
 }
 
 $stderr.puts "base java command"
@@ -101,3 +106,4 @@ $stderr.puts( "java -jar -Xms256m -Xmx6g " +
 $stderr.puts "region file base names...stats and cov files have same idx"
 $stderr.puts sub_file_names
 
+sub_files.each { |f| f.delete }

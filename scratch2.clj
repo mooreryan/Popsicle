@@ -5,7 +5,7 @@
   73  --read paired, mate unmapped, first in pair
   137 --read paired, mate unmapped, second in pair
   0   --nothing! specificall it's not paired"
-  [read1-name read2-name ref-name start len insert-size]
+  [read-name ref-name start len insert-size]
   (let [ins-size (+ insert-size (sample (range -5 6) :size 1))
         read1-flag 65
         read2-flag 129
@@ -16,18 +16,19 @@
         read1-end (+ read1-start (dec len))
         read2-start (+ read1-end (inc insert-size))
         read2-end (+ read2-start (dec len))
+        rnext "="
         tlen (inc (- read2-end read1-start))
         seq "*"
         qual "*"]
     (str (clojure.string/join 
           "\t" 
-          [read1-name read1-flag ref-name read1-start map-qual cigar
-           read2-name read2-start tlen seq qual])
+          [read-name read1-flag ref-name read1-start map-qual cigar
+           rnext read2-start tlen seq qual])
          "\n"
          (clojure.string/join 
           "\t" 
-          [read2-name read2-flag ref-name read2-start map-qual cigar
-           read1-name read1-start (- tlen) seq qual]))))
+          [read-name read2-flag ref-name read2-start map-qual cigar
+           rnext read1-start (- tlen) seq qual]))))
 
 
 

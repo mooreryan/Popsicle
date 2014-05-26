@@ -91,10 +91,19 @@
                        (region-stats ys (regions "ref1") "ref1"))))
 
 
+(def my-bam "/Users/ryanmoore/projects/popsicle/test_files/my_test_file.sorted.bam")
+(def my-bai "/Users/ryanmoore/projects/popsicle/test_files/my_test_file.sorted.bam.bai")
+(def reader (new-sf-reader my-bam my-bai))
+(def iter (iterator-seq (make-ref-iter reader "ref1")))
+(def first-record (first iter))
+(def avg-insert-size 500)
+(def read-len 150)
+
+
 (describe "extend-read"
           (it "extends reads"
               (should= :apple
-                       (extend-read sam-record avg-insert-size))))
+                       (extend-read first-record avg-insert-size read-len))))
 
 ;; Copyright 2013 Ryan Moore
 

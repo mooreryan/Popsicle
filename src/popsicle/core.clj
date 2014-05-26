@@ -92,7 +92,7 @@
                   (apply str 
                          ref 
                          ",[" 
-                         (clojure.string/join " " ys) "]")
+                         (clojure.string/join " " ys) "]\n")
                   :append true)
             (spit (:stats-file options)
                   (apply str reg-stats)
